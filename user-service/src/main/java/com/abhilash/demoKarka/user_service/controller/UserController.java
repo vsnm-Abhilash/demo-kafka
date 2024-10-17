@@ -1,5 +1,7 @@
 package com.abhilash.demoKarka.user_service.controller;
 
+import com.abhilash.demoKarka.user_service.dto.CreateUserRequestDto;
+import com.abhilash.demoKarka.user_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,7 @@ public class UserController {
     private String KAFKA_RANDOM_TOPIC;
 
     private final KafkaTemplate<String,String> kafkaTemplate;
+    private final UserService userService;
 
     @PostMapping("/{message}")
     public ResponseEntity<String> sendMessage(@PathVariable String message){
@@ -24,6 +27,12 @@ public class UserController {
             kafkaTemplate.send(KAFKA_RANDOM_TOPIC, ""+i%3,message+" "+i);
         }
         return ResponseEntity.ok("Message queued");
+    }
+
+    @PostMapping
+    public ResponseEntity<String> createUser(@RequestBody CreateUserRequestDto createUserRequestDto){
+        userService.createUser(createUserRequestDto);
+        return ResponseEntity.ok("User Created");
     }
 
 }
